@@ -56,16 +56,6 @@ class User
 end
 
 # Describe and test the desired behavior using rspec.
-#
-# user = User.find(1)
-# user.karma                        # => 12
-# user.karma.commenting             # => 6
-# user.karma.commenting += 1        # => 7
-# user.karma                        # => 13
-# user.karma += 2                   # => 15
-# user.karma                        # => 15
-# user.save!
-
 describe User do
   before(:each) do
     @user = User.new
@@ -86,6 +76,54 @@ describe User do
       @user.karma = 3
       @user.karma -= 1
       @user.karma.should == 2
+    end
+    describe "#comments (a bucket name)" do
+      it "should start out at zero" do
+        @user.karma.comments.should == 0
+      end
+      it "should be assignable" do
+        @user.karma.comments = 12
+        @user.karma.comments.should == 12
+      end
+      it "should be increasable" do
+        @user.karma.comments += 3
+        @user.karma.comments.should == 3
+      end
+      it "should be decreasable" do
+        @user.karma.comments = 3
+        @user.karma.comments -= 1
+        @user.karma.comments.should == 2
+      end
+      it "should be reflected in the total karma" do
+        @user.karma.comments = 3
+        @user.karma.should == 3
+        @user.karma.comments += 1
+        @user.karma.comments.should == 4
+        @user.karma.should == 4
+      end
+    end
+    describe "#edits (another bucket name)" do
+      it "should be independent of the comments bucket" do
+        @user.karma.comments = 3
+        @user.karma.comments.should == 3
+        @user.karma.edits.should    == 0
+        @user.karma.should          == 3
+        
+        @user.karma.edits = 2
+        @user.karma.comments.should == 3
+        @user.karma.edits.should    == 2
+        @user.karma.should          == 5
+        
+        @user.karma.comments += 1
+        @user.karma.comments.should == 4
+        @user.karma.edits.should    == 2
+        @user.karma.should          == 6
+        
+        @user.karma.edits += 1
+        @user.karma.comments.should == 4
+        @user.karma.edits.should    == 3
+        @user.karma.should          == 7
+      end
     end
   end
 end
