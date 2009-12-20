@@ -29,6 +29,7 @@ module Karma
     # Set the value of the comments bucket.
     def comments=(new_value)
       @karma[:comments] = new_value
+      update_total
     end
     
     # Retrieve the value of the edits bucket.
@@ -39,11 +40,23 @@ module Karma
     # Set the value of the edits bucket.
     def edits=(new_value)
       @karma[:edits] = new_value
+      update_total
     end
     
     # Proxy any other method to the total.
     def method_missing(sym, *args, &block)
       @karma[:total].__send__(sym, *args, &block)
+    end
+    
+    private
+    
+    def update_total
+      total = 0
+      @karma.each do |key, value|
+        next if key == :total
+        total += value
+      end
+      @karma[:total] = total
     end
   end
   
