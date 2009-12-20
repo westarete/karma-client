@@ -5,6 +5,9 @@
 # will need to integrate with a Karma server.
 module Karma
 
+  # The buckets that are defined on the karma server.
+  BUCKETS = [:comments, :edits]
+
   # A class that has had all instance methods stripped except for __id__ and
   # __send__. This provides the basis for a good proxy object.
   class BlankSlate 
@@ -21,28 +24,21 @@ module Karma
       @karma = karma
     end
     
-    # Retrieve the value of the comments bucket.
-    def comments
-      @karma[:comments]
+    # Create accessor methods for retrieving and setting the values of each
+    # bucket.
+    BUCKETS.each do |bucket_name|
+      # Define the getter.
+      define_method(bucket_name) do
+        @karma[bucket_name]
+      end
+      
+      # Define the setter.
+      define_method("#{bucket_name}=") do |new_value|
+        @karma[bucket_name] = new_value
+        update_total
+      end
     end
-
-    # Set the value of the comments bucket.
-    def comments=(new_value)
-      @karma[:comments] = new_value
-      update_total
-    end
-    
-    # Retrieve the value of the edits bucket.
-    def edits
-      @karma[:edits]
-    end
-    
-    # Set the value of the edits bucket.
-    def edits=(new_value)
-      @karma[:edits] = new_value
-      update_total
-    end
-    
+        
     # Proxy any other method to the total.
     def method_missing(sym, *args, &block)
       @karma[:total].__send__(sym, *args, &block)
@@ -50,6 +46,7 @@ module Karma
     
     private
     
+    # Set the total karma based on the values of all the buckets.
     def update_total
       total = 0
       @karma.each do |key, value|
