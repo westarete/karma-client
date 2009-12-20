@@ -22,9 +22,10 @@ module Karma
   # make up the total.
   class KarmaValueProxy < BlankSlate
     # Initialize with a hash of all the karma bucket values. This object will
-    # proxy all methods back to the :total value in the hash.
-    def initialize(karma)
-      @karma = karma
+    # proxy all methods back to the total value of the buckets (the karma
+    # total).
+    def initialize(buckets)
+      @buckets = buckets
     end
     
     # Create accessor methods for retrieving and setting the values of each
@@ -32,18 +33,18 @@ module Karma
     BUCKETS.each do |bucket_name|
       # Define the getter.
       define_method(bucket_name) do
-        @karma[bucket_name]
+        @buckets[bucket_name]
       end
       
       # Define the setter.
       define_method("#{bucket_name}=") do |new_value|
-        @karma[bucket_name] = new_value
+        @buckets[bucket_name] = new_value
       end
     end
         
     # Proxy any other method to the total.
     def method_missing(sym, *args, &block)
-      @karma.values.sum.__send__(sym, *args, &block)
+      @buckets.values.sum.__send__(sym, *args, &block)
     end    
   end
   
@@ -51,8 +52,8 @@ module Karma
   module User
     # Return the user's total karma.
     def karma
-      @karma ||= Hash.new(0)
-      KarmaValueProxy.new(@karma)
+      @buckets ||= Hash.new(0)
+      KarmaValueProxy.new(@buckets)
     end
   end
 
@@ -100,7 +101,7 @@ describe User do
         @user.karma.should == 0
         @user.karma.comments.should == 0
         @user.karma.comments = 3
-        @user.instance_variable_get(:@karma)[:comments].should == 3
+        @user.instance_variable_get(:@buckets)[:comments].should == 3
       end
     end
     describe "#edits (another bucket name)" do
