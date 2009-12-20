@@ -4,6 +4,8 @@ require 'karma'
 require 'spec'
 require 'spec/autorun'
 
+include Karma
+
 Spec::Runner.configure do |config|
   
 end
