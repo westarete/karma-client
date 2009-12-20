@@ -153,5 +153,12 @@ describe User do
         @user.karma.should          == 7
       end
     end
+    describe "a non-existent bucket" do
+      it "should raise a NoMethodError" do
+        lambda {
+          @user.karma.not_there
+        }.should raise_error(NoMethodError)
+      end
+    end
   end
 end
