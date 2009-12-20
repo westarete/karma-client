@@ -21,9 +21,22 @@ describe Proxy do
     @proxy.edits -= 1
     @proxy.edits.should == 1
   end
-  it "should update the total when the buckets are updated" do
-    @proxy.should == 3
-    @proxy.comments += 2
-    @proxy.should == 5
+  describe "when the buckets are updated" do
+    it "should update the total" do
+      @proxy.should == 3
+      @proxy.comments += 2
+      @proxy.should == 5
+    end
+    it "should keep the bucket values independent of each other" do
+      @proxy.comments += 1
+      @proxy.comments.should == 2
+      @proxy.edits -= 1
+      @proxy.edits.should == 1
+    end
+  end
+  describe "for a non-existent bucket" do
+    it "should raise a NoMethodError" do
+      lambda { @proxy.not_there }.should raise_error(NoMethodError)
+    end
   end
 end
