@@ -1,3 +1,5 @@
+require 'rubygems'
+require 'active_support'
 require 'karma/buckets'
 require 'karma/blank_slate'
 require 'karma/proxy'
