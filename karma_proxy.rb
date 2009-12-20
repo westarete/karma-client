@@ -56,26 +56,36 @@ class User
 end
 
 # Describe and test the desired behavior using rspec.
+#
+# user = User.find(1)
+# user.karma                        # => 12
+# user.karma.commenting             # => 6
+# user.karma.commenting += 1        # => 7
+# user.karma                        # => 13
+# user.karma += 2                   # => 15
+# user.karma                        # => 15
+# user.save!
 
 describe User do
   before(:each) do
     @user = User.new
   end
-  it "should start out with a karma of zero" do
-    @user.karma.should == 0
-  end
-  describe "incrementing the total karma by one" do
-    it "should return 1" do
-      (@user.karma += 1).should == 1
+  describe "#karma" do
+    it "should start out at zero" do
+      @user.karma.should == 0
     end
-    it "should retain its value" do
-      @user.karma += 1
-      @user.karma.should == 1      
+    it "should be assignable" do
+      @user.karma = 12
+      @user.karma.should == 12
     end
-  end
-  describe "karma for a bucket" do    
-    it "should return the value in that bucket" do
-      @user.karma.for(:comments).should == 0
+    it "should be increasable" do
+      @user.karma += 3
+      @user.karma.should == 3
+    end
+    it "should be decreasable" do
+      @user.karma = 3
+      @user.karma -= 1
+      @user.karma.should == 2
     end
   end
 end
