@@ -28,8 +28,14 @@ module Karma
       @buckets = buckets
     end
     
-    # Create accessor methods for retrieving and setting the values of each
-    # bucket.
+    # Proxy any unknown method to the karma total (a Fixnum).
+    def method_missing(sym, *args, &block)
+      @buckets.values.sum.__send__(sym, *args, &block)
+    end    
+
+    # Define accessor methods for retrieving and setting the values of each
+    # bucket. We are essentially decorating the karma total with these
+    # methods.
     BUCKETS.each do |bucket_name|
       # Define the getter.
       define_method(bucket_name) do
@@ -40,12 +46,7 @@ module Karma
       define_method("#{bucket_name}=") do |new_value|
         @buckets[bucket_name] = new_value
       end
-    end
-        
-    # Proxy any other method to the total.
-    def method_missing(sym, *args, &block)
-      @buckets.values.sum.__send__(sym, *args, &block)
-    end    
+    end        
   end
   
   # Provide karma capability to a user model.
@@ -70,6 +71,9 @@ describe User do
     @user = User.new
   end
   describe "#karma" do
+    it "should return a Fixnum" do
+      @user.karma.class.should == Fixnum
+    end
     it "should start out at zero" do
       @user.karma.should == 0
     end
