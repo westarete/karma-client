@@ -21,9 +21,24 @@ module Karma
       @karma = karma
     end
     
-    # Provide a method for accessing the karma value in a given bucket.
-    def for(bucket)
-      @karma[bucket]
+    # Retrieve the value of the comments bucket.
+    def comments
+      @karma[:comments]
+    end
+
+    # Set the value of the comments bucket.
+    def comments=(new_value)
+      @karma[:comments] = new_value
+    end
+    
+    # Retrieve the value of the edits bucket.
+    def edits
+      @karma[:edits]
+    end
+    
+    # Set the value of the edits bucket.
+    def edits=(new_value)
+      @karma[:edits] = new_value
     end
     
     # Proxy any other method to the total.
