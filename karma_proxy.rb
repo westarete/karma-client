@@ -64,13 +64,6 @@ module Karma
       @karma ||= Hash.new(0)
       KarmaValueProxy.new(@karma)
     end
-    
-    # Set the user's total karma.
-    def karma=(new_value)
-      @karma ||= Hash.new(0)
-      @karma[:total] = new_value
-      KarmaValueProxy.new(@karma)
-    end    
   end
 
 end
@@ -88,19 +81,6 @@ describe User do
   describe "#karma" do
     it "should start out at zero" do
       @user.karma.should == 0
-    end
-    it "should be assignable" do
-      @user.karma = 12
-      @user.karma.should == 12
-    end
-    it "should be increasable" do
-      @user.karma += 3
-      @user.karma.should == 3
-    end
-    it "should be decreasable" do
-      @user.karma = 3
-      @user.karma -= 1
-      @user.karma.should == 2
     end
     describe "#comments (a bucket name)" do
       it "should start out at zero" do
