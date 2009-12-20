@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-describe BlankSlate do
+describe Karma::BlankSlate do
   before(:each) do
     @blank = BlankSlate.new
   end
