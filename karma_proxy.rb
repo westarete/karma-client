@@ -129,6 +129,13 @@ describe User do
         @user.karma.comments.should == 4
         @user.karma.should == 4
       end
+      it "should update the User object's copy of the karma as well" do
+        @user.karma.should == 0
+        @user.karma.comments.should == 0
+        @user.karma.comments = 3
+        @user.instance_variable_get(:@karma)[:comments].should == 3
+        @user.instance_variable_get(:@karma)[:total].should == 3
+      end
     end
     describe "#edits (another bucket name)" do
       it "should be independent of the comments bucket" do
