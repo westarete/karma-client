@@ -1,6 +1,9 @@
 # For best results, run this file with the command:
 #   spec -c -f n karma_proxy.rb
 
+require 'rubygems'
+require 'active_support'
+
 # This module provides all the client-side functionality that the web app 
 # will need to integrate with a Karma server.
 module Karma
@@ -35,26 +38,13 @@ module Karma
       # Define the setter.
       define_method("#{bucket_name}=") do |new_value|
         @karma[bucket_name] = new_value
-        update_total
       end
     end
         
     # Proxy any other method to the total.
     def method_missing(sym, *args, &block)
-      @karma[:total].__send__(sym, *args, &block)
-    end
-    
-    private
-    
-    # Set the total karma based on the values of all the buckets.
-    def update_total
-      total = 0
-      @karma.each do |key, value|
-        next if key == :total
-        total += value
-      end
-      @karma[:total] = total
-    end
+      @karma.values.sum.__send__(sym, *args, &block)
+    end    
   end
   
   # Provide karma capability to a user model.
@@ -111,7 +101,6 @@ describe User do
         @user.karma.comments.should == 0
         @user.karma.comments = 3
         @user.instance_variable_get(:@karma)[:comments].should == 3
-        @user.instance_variable_get(:@karma)[:total].should == 3
       end
     end
     describe "#edits (another bucket name)" do
