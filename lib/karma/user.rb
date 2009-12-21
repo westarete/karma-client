@@ -5,7 +5,10 @@ module Karma
     
     # Provide access to the user's karma.
     def karma
-      @buckets ||= Hash.new(0)
+      if @buckets.nil?
+        @buckets = {}
+        BUCKETS.each { |name| @buckets[name] = 0 }
+      end
       Proxy.new(@buckets)
     end
     

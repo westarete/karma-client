@@ -16,31 +16,35 @@ module Karma
     # bucket names as symbols, and the values are the bucket totals.
     def initialize(buckets)
       @buckets = buckets
+      create_accessors
     end
   
-    # Define accessor methods for retrieving and setting the values of each
-    # bucket. We are essentially decorating the karma total Fixnum object with
-    # these methods.
-    BUCKETS.each do |bucket_name|
-      
-      # Define the getter.
-      define_method(bucket_name) do
-        @buckets[bucket_name]
-      end
-    
-      # Define the setter.
-      define_method("#{bucket_name}=") do |new_value|
-        @buckets[bucket_name] = new_value
-      end
-      
-    end        
-
     def method_missing(sym, *args, &block)
       # Proxy any unknown method to the karma total Fixnum object. Since we've
       # stripped away any normal Object functionality by inheriting from
       # BlankSlate, this means that this object will behave almost identically
       # to a Fixnum.
       @buckets.values.sum.__send__(sym, *args, &block)
+    end
+    
+    private
+    
+    # Define accessor methods for retrieving and setting the values of each
+    # bucket. We are essentially decorating the karma total Fixnum object with
+    # these methods.
+    def create_accessors
+      @buckets.keys.each do |bucket_name|
+        class_eval do
+          # Define the getter.
+          define_method(bucket_name) do
+            @buckets[bucket_name]
+          end
+          # Define the setter.
+          define_method("#{bucket_name}=") do |new_value|
+            @buckets[bucket_name] = new_value
+          end
+        end
+      end        
     end
   end
 
